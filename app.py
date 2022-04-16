@@ -1,6 +1,5 @@
 from aiogram import executor
-
-from loader import dp
+from loader import dp, bot, storage
 import middlewares, filters, handlers
 from utils.notify_admins import on_startup_notify, on_shutdown_notify
 from utils.set_bot_commands import set_default_commands
@@ -9,7 +8,6 @@ from utils.set_bot_commands import set_default_commands
 async def on_startup(dispatcher):
     # Устанавливаем дефолтные команды
     await set_default_commands(dispatcher)
-
     # Уведомляет про запуск
     await on_startup_notify(dispatcher)
 
@@ -17,6 +15,8 @@ async def on_startup(dispatcher):
 async def on_shutdown(dispatcher):
     # Уведомляет о выключениии
     await on_shutdown_notify(dispatcher)
+    await bot.close()
+    await storage.close()
 
 
 if __name__ == '__main__':
