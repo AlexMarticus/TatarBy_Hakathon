@@ -21,5 +21,7 @@ async def bot_help(message: types.Message):
                 "/start - Начать диалог",
                 "/help - Получить справку",
                 '/set_tat - Как установить татарскую раскладку',
-                '/training - Начать дневную трениовку')
+                '/training - Начать дневную трениовку',
+                '/new_words - узнать новые слова, распределённые по темам',
+                '/list_words - получить список всех изучаемых слов')
     await message.answer("\n".join(text))

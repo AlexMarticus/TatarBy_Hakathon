@@ -1,12 +1,9 @@
-import asyncio
-from contextlib import suppress
 from aiogram import types
-from aiogram.dispatcher.filters.builtin import CommandStart
-from aiogram.types import CallbackQuery, InputFile
-from aiogram.utils.exceptions import MessageCantBeDeleted, MessageToDeleteNotFound
+from aiogram.types import CallbackQuery
 
+from handlers.users.start import delete_message
 from keyboards.inline.oc_buttons import operation_sys
-from loader import dp, bot
+from loader import dp
 
 
 @dp.message_handler(commands="set_tat")
@@ -68,9 +65,3 @@ async def windows_set_lang(call: CallbackQuery):
 Если в тексте вам нужно использовать эти русские буквы, не нужно менять раскладку: их следует писать,
 нажимая одновременно с клавишами «Ctrl» и «Alt». Например, чтобы набрать букву «ж», нажмите одновременно «Ctrl+Alt+ж».""")
     await delete_message(call.message)
-
-
-async def delete_message(message: types.Message, sleep_time: int = 0):
-    await asyncio.sleep(sleep_time)
-    with suppress(MessageCantBeDeleted, MessageToDeleteNotFound):
-        await message.delete()
