@@ -75,10 +75,6 @@ async def get_random_word(user_id, state: FSMContext, flag=False):
         all_user_words = await getUserWords(user)
         need_words = []
         for i in all_user_words:
-            """
-            if 'date' not in all_user_words[i]:
-                continue
-            """
             if not ('date' not in all_user_words[i]):
                 if datetime.datetime.strptime(all_user_words[i]['date'].split(' ')[0], "%Y-%m-%d") == \
                     str(datetime.date.today()) or all_user_words[i]['date'] is None:
@@ -114,18 +110,18 @@ async def get_random_word(user_id, state: FSMContext, flag=False):
     return need_words[stupid]
 
 
-@dp.message_handler(commands="training")
-async def start_training(message: types.Message, state: FSMContext):
+@dp.callback_query_handler(text="training")
+async def start_training(call: types.CallbackQuery, state: FSMContext):
     words_in_use = []
     async with state.proxy() as data:
         data['ref1'] = words_in_use
-        data['ref5'] = message.from_user.id
-    word = await get_random_word(message.from_user.username, state, flag=True)
+        data['ref5'] = call.from_user.id
+    word = await get_random_word(call.from_user.username, state, flag=True)
     if not word:
-        await message.answer('На сегодня слов не найдено')
+        await call.message.answer('На сегодня слов не найдено')
     else:
         words_in_use.append([word[1]])
-        await message.answer("Вы начали тренировку на день.\n"
+        await call.message.answer("Вы начали тренировку на день.\n"
                              "Вопрос №1. \n\n"
                              f"как переводится {word[1]}?")
         async with state.proxy() as data:

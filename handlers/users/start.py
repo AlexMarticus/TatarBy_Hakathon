@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.exceptions import MessageCantBeDeleted, MessageToDeleteNotFound
 
 from api_control import getUsers
-from keyboards.inline.start_buttons import username_registration_inl_kb
+from keyboards.inline.start_buttons import username_registration_inl_kb, main_bts_in_start
 from loader import dp
 
 
@@ -25,11 +25,7 @@ async def bot_start(message: types.Message):
 А если ты ещё не знаком с нами, "Регистрация" - то, что тебе нужно""", reply_markup=username_registration_inl_kb)
     else:
         await message.answer(f"""Привет, {message.from_user.full_name}!
-/training - твой главный помощник(тренировка на день);
-/list_words - увидеть свой список слов, которые находятся в программе изучения;
-/new_words - узнать новые слова, распределённые оп темам;
-/test - пройти тест на знание татарского
-""")
+Выбирай нужную тебе кнопку""", reply_markup=main_bts_in_start)
 
 
 @dp.callback_query_handler(text='indicate_username_in_site')

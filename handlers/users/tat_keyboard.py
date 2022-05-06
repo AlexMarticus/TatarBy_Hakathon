@@ -23,7 +23,7 @@ async def ios_set_lang(call: CallbackQuery):
 @dp.callback_query_handler(text='mac_set_lang')
 async def mac_set_lang(call: CallbackQuery):
     await call.answer(cache_time=60)
-    await call.message.reply_document(open('tatar_keyboard.dmg', 'rb'))
+    await call.message.answer_document(open('tatar_keyboard.dmg', 'rb'))
     await call.message.answer("""Раскладка клавиатуры позволяет использовать привычный способ набора татарских символов в устройствах под управлением macOS:
 — для набора татарских букв: ө-ц, һ-§ (кнопка левее «1»), ә-щ, ү-ъ, ң-ж, җ-ь;
 — для набора букв ц, щ, ъ, ь, ж — необходимо вводить их с зажатой клавишей alt;

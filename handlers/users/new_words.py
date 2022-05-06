@@ -1,17 +1,20 @@
+import datetime
 import random
 
 from aiogram import types
 from aiogram.types import CallbackQuery
 
-from api_control import getUsers, getWords, appendWord
+from api_control import getUsers, getWords, appendWord, getUserWords, createWord, changeWordLevel
 from keyboards.inline.new_words_buttons import themes_for_new_words
-from loader import dp
-from translate_word_func import translate_rus_to_tat
+from loader import dp, bot
+from utils.translate import rus_to_tat_translate
 
 
-@dp.message_handler(commands="new_words")
-async def new_words_themes(message: types.Message):
-    await message.answer('Выберите тему, слово которой Вы желаете заучить', reply_markup=themes_for_new_words)
+@dp.callback_query_handler(text="new_words")
+async def new_words_themes(call: types.CallbackQuery):
+    await bot.answer_callback_query(call.id)
+    text = 'Выберите тему, слово которой Вы желаете заучить'
+    await bot.send_message(call.from_user.id, text, reply_markup=themes_for_new_words)
 
 
 @dp.callback_query_handler(text='whether_kb')
@@ -27,11 +30,21 @@ async def whether_f(call: CallbackQuery):
         if all_users[i]["telegram_id"] == call.from_user.username:
             user = i
             break
+    word_ids = all_users[user]['words']
     rus_word = random.choice(weather)
-    tat_word = translate_rus_to_tat(rus_word)['main_translation']
-    while tat_word is None:
+    tat_word = rus_to_tat_translate(rus_word)
+    words_of_user = await getUserWords(user)
+    flag = True
+    for i in words_of_user:
+        if words_of_user[i]['word'] == tat_word:
+            flag = False
+    while tat_word is None and flag:
         rus_word = random.choice(weather)
-        tat_word = translate_rus_to_tat(rus_word)['main_translation']
+        tat_word = rus_to_tat_translate(rus_word)
+        flag = True
+        for i in words_of_user:
+            if words_of_user[i]['word'] == tat_word:
+                flag = False
     await call.message.answer(f'Добавили новое слово в программу для обучения:\n\n{tat_word} - {rus_word}')
     all_words = await getWords()
     word_id = 1234567890
@@ -58,18 +71,27 @@ async def family_f(call: CallbackQuery):
             user = i
             break
     rus_word = random.choice(family)
-    tat_word = translate_rus_to_tat(rus_word)['main_translation']
-    while tat_word is None:
+    tat_word = rus_to_tat_translate(rus_word)
+    words_of_user = await getUserWords(user)
+    flag = True
+    for i in words_of_user:
+        if words_of_user[i]['word'] == tat_word:
+            flag = False
+    while tat_word is None and not flag:
         rus_word = random.choice(family)
-        tat_word = translate_rus_to_tat(rus_word)['main_translation']
+        tat_word = rus_to_tat_translate(rus_word)
+        flag = True
+        for i in words_of_user:
+            if words_of_user[i]['word'] == tat_word:
+                flag = False
     await call.message.answer(f'Добавили новое слово в программу для обучения:\n\n{tat_word} - {rus_word}')
+    await createWord(tat_word, rus_word)
     all_words = await getWords()
-    word_id = 1234567890
-    for i in all_words:
-        if all_words[i]['word_ru'] == rus_word:
-            word_id = i
-            break
+    word_id = max(list(map(int, all_words.keys())))
+    print(word_id)
     await appendWord(user, word_id)
+    await changeWordLevel(user, word_id, 0, str(datetime.datetime.now()))
+    print(await getWords())
 
 
 @dp.callback_query_handler(text='travelling_kb')
@@ -94,10 +116,19 @@ async def travelling_f(call: CallbackQuery):
             user = i
             break
     rus_word = random.choice(travelling)
-    tat_word = translate_rus_to_tat(rus_word)['main_translation']
-    while tat_word is None:
+    tat_word = rus_to_tat_translate(rus_word)
+    words_of_user = await getUserWords(user)
+    flag = True
+    for i in words_of_user:
+        if words_of_user[i]['word'] == tat_word:
+            flag = False
+    while tat_word is None and flag:
         rus_word = random.choice(travelling)
-        tat_word = translate_rus_to_tat(rus_word)['main_translation']
+        tat_word = rus_to_tat_translate(rus_word)
+        flag = True
+        for i in words_of_user:
+            if words_of_user[i]['word'] == tat_word:
+                flag = False
     await call.message.answer(f'Добавили новое слово в программу для обучения:\n\n{tat_word} - {rus_word}')
     all_words = await getWords()
     word_id = 1234567890
@@ -125,10 +156,19 @@ async def food_f(call: CallbackQuery):
             user = i
             break
     rus_word = random.choice(food)
-    tat_word = translate_rus_to_tat(rus_word)['main_translation']
-    while tat_word is None:
+    tat_word = rus_to_tat_translate(rus_word)
+    words_of_user = await getUserWords(user)
+    flag = True
+    for i in words_of_user:
+        if words_of_user[i]['word'] == tat_word:
+            flag = False
+    while tat_word is None and flag:
         rus_word = random.choice(food)
-        tat_word = translate_rus_to_tat(rus_word)['main_translation']
+        tat_word = rus_to_tat_translate(rus_word)
+        flag = True
+        for i in words_of_user:
+            if words_of_user[i]['word'] == tat_word:
+                flag = False
     await call.message.answer(f'Добавили новое слово в программу для обучения:\n\n{tat_word} - {rus_word}')
     all_words = await getWords()
     word_id = 1234567890

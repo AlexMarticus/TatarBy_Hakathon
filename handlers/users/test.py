@@ -6,13 +6,14 @@ from loader import dp, bot
 from states.test_lvl import Test
 
 
-@dp.message_handler(commands="test")
-async def start_test(message: types.Message, state: FSMContext):
+@dp.callback_query_handler(text="test")
+async def start_test(call: types.CallbackQuery, state: FSMContext):
     answers_all = []
     async with state.proxy() as data:
         data['ref10'] = answers_all
-        data['ref11'] = message.from_user.username
-    await message.answer("Вы начали тестирование. <strong>В ответ записывайте номер ответа.</strong>\n"
+        data['ref11'] = call.from_user.username
+    await call.message.answer("Вы начали тестирование. Оно стостоит из 28 вопросов.\n"
+                         "<strong>В ответ записывайте номер ответа.</strong>\n\n"
                          "Вопрос №1. \n\n"
                          "Гласные в татарском языке бывают мягкие и твёрдые.\n"
                          "В каком из слов буква «я» произносится в мягком варианте [йә]?\n\n"
@@ -491,7 +492,7 @@ async def answer_q2(message: types.Message, state: FSMContext):
     id_shka = user_id
     answers_all.append(answer == '4')
     if sum(answers_all) / 28 < 0.33:
-        await message.answer(f"Ваш уровень - Новичёк({sum(answers_all)} правильных ответов)")
+        await message.answer(f"Ваш уровень - Новичок({sum(answers_all)} правильных ответов)")
         lvl = 1
     elif sum(answers_all) / 28 < 0.66:
         await message.answer(f"Ваш уровень - Средний({sum(answers_all)} правильных ответов)")

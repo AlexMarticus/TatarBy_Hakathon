@@ -183,7 +183,9 @@ async def deleteWordLevel(word_level_id):
 async def appendWord(user_id, word_id):
     user = await getUser(user_id)
     words = user[user_id]['words']
-    words = words + ',' + word_id if len(words) > 0 else word_id
+    print(words)
+    words = words + ',' + str(word_id) if len(words) > 0 else str(word_id)
+    print(words)
     await changeUser(user_id, user[user_id]['name'], user[user_id]['email'], user[user_id]['level_id'], words=words)
 
 
